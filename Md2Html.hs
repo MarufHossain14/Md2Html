@@ -30,8 +30,16 @@ blocks = go [] []
       | null (trim l) = go (finish acc cur) [] ls
       | otherwise     = go acc (cur ++ [l]) ls
 
+    finish :: [Block] -> [String] -> [Block]
     finish acc []  = acc
-    finish acc cur = Para (unwords cur) : acc  -- join with spaces
+    finish acc cur =
+      case trim (head cur) of
+        l | "# "   `isPrefixOf` l -> H 1 (drop 2 l) : acc
+          | "## "  `isPrefixOf` l -> H 2 (drop 3 l) : acc
+          | "### " `isPrefixOf` l -> H 3 (drop 4 l) : acc
+          | otherwise             -> Para (unwords cur) : acc
+
+
 
 data Block = H Int String | Para String
 
@@ -73,7 +81,7 @@ dropPrefix pfx s
   | otherwise          = s
 
 trim :: String -> String
-trim = f . f where f = reverse . dropWhile (`elem` [' ', '\t'])
+trim = f . f where f = reverse . dropWhile (`elem` [' ', '\t', '\r'])
 
 -- Minimal HTML escape (only what we used)
 escape :: String -> String
