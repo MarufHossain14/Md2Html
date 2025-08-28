@@ -1,0 +1,29 @@
+# Ignore Haskell build artifacts
+*.hi
+*.o
+*.exe
+
+# Ignore HTML output
+output.html
+
+# Ignore Markdown input (if generated)
+input.md
+
+# Ignore editor/OS files
+*.swp
+*.swo
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Ignore cabal and stack files (if used in future)
+.cabal-sandbox/
+.stack-work/
+*.cabal
+
+# Ignore log files
+*.log
+
+# Ignore environment files
+.env
