@@ -7,9 +7,13 @@
 output.html
 
 # Ignore Markdown input (if generated)
-input.md
+output.md
+
 
 # Ignore editor/OS files
+*~
+.vscode/
+.idea/
 *.swp
 *.swo
 *.bak
@@ -21,6 +25,31 @@ Thumbs.db
 .cabal-sandbox/
 .stack-work/
 *.cabal
+
+# Ignore cabal build artifacts and dist-newstyle
+dist/
+dist-newstyle/
+*.build/
+*.cache/
+*.packagedb/
+
+# Ignore autogen and setup-config files
+**/autogen/
+**/setup-config
+**/package.conf.inplace/
+**/package.cache
+**/package.cache.lock
+
+# Ignore static libraries
+*.a
+
+# Ignore profiling and coverage files
+*.prof
+*.tix
+*.aux
+
+# Ignore example and test files
+examples/
 
 # Ignore log files
 *.log
