@@ -9,7 +9,7 @@ main = do
   case args of
     [inp, out] -> do
       md <- readFile inp
-      let htmlBody = unlines (map mdLineToHtml (lines md))
+      let htmlBody = unlines (map blockToHtml (blocks (lines md)))
       let page = wrapHtml htmlBody
       writeFile out page
       putStrLn ("Wrote " ++ out)
@@ -20,14 +20,24 @@ wrapHtml body =
   "<!doctype html>\n<html><head><meta charset=\"utf-8\"><title>MD &rarr; HTML</title></head><body>\n"
   ++ body ++ "\n</body></html>\n"
 
+-- Split lines into blocks separated by blank lines
+blocks :: [String] -> [Block]
+blocks = go [] []
+  where
+    go acc cur [] =
+      reverse (finish acc cur)
+    go acc cur (l:ls)
+      | null (trim l) = go (finish acc cur) [] ls
+      | otherwise     = go acc (cur ++ [l]) ls
 
-mdLineToHtml :: String -> String
-mdLineToHtml line
-  | null (trim line)     = ""  -- skip blank lines
-  | "# "   `isPrefixOf` line = "<h1>" ++ inline (drop 2 line) ++ "</h1>"
-  | "## "  `isPrefixOf` line = "<h2>" ++ inline (drop 3 line) ++ "</h2>"
-  | "### " `isPrefixOf` line = "<h3>" ++ inline (drop 4 line) ++ "</h3>"
-  | otherwise             = "<p>"  ++ inline line ++ "</p>"
+    finish acc []  = acc
+    finish acc cur = Para (unwords cur) : acc  -- join with spaces
+
+data Block = H Int String | Para String
+
+blockToHtml :: Block -> String
+blockToHtml (H n s)   = "<h"++show n++">" ++ inline s ++ "</h"++show n++">"
+blockToHtml (Para s)  = "<p>" ++ inline s ++ "</p>"
 
 -- Very tiny inline parser: **bold** and *italic*
 inline :: String -> String
